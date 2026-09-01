@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>December Meetup — Pick the Spot</title>
+    <style>
+        :root {
+            --bg: #FAF6EC;
+            --green-deep: #163A2E;
+            --green-mid: #2C5F4A;
+            --gold: #C9982F;
+            --gold-light: #E8C878;
+            --ink: #1F2A24;
+            --card-bg: #FFFFFF;
+            --card-border: #E4DCC6;
+            --card-border-lead: #C9982F;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'Georgia', 'Iowan Old Style', serif;
+            padding: 28px 18px 60px;
+        }
+
+        .wrap {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: left;
+            margin-bottom: 24px;
+            border-bottom: 3px solid var(--green-deep);
+            padding-bottom: 18px;
+        }
+
+        header h1 {
+            font-size: 30px;
+            line-height: 1.15;
+            margin: 0 0 8px;
+            color: var(--green-deep);
+            font-weight: 700;
+        }
+
+        header p {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14.5px;
+            color: #55594F;
+            line-height: 1.5;
+        }
+
+        .header-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 14px;
+        }
+
+        .total-count {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--green-deep);
+            display: flex;
+            align-items: center;
+        }
+
+        .live-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #4C9A6A;
+            margin-right: 6px;
+            animation: pulse 1.6s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.35;
+            }
+        }
+
+        .live-label {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 12px;
+            color: #7A7D6F;
+        }
+
+        .status {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            color: var(--gold);
+            margin-top: 10px;
+            min-height: 16px;
+        }
+
+        .option {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+
+        .option.leading {
+            border-color: var(--card-border-lead);
+            border-width: 1.5px;
+        }
+
+        .option-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .option-name {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--green-deep);
+        }
+
+        .crown {
+            margin-left: 6px;
+            font-size: 14px;
+        }
+
+        .option-meta {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            color: #6B6F63;
+            margin-top: 4px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 2;
+        }
+
+        .option-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .vote-count {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            color: var(--green-mid);
+            font-weight: 600;
+        }
+
+        .vote-btn {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--green-deep);
+            color: #FCF8EE;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 6px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .vote-btn:hover:not(:disabled) {
+            background: var(--green-mid);
+        }
+
+        .vote-btn:disabled {
+            background: #D8D2BE;
+            color: #8B8878;
+            cursor: default;
+        }
+
+        .fill-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, #F3E6C4, #F3E6C400);
+            z-index: 1;
+            transition: width 0.4s ease;
+        }
+
+        .voted-tag {
+            display: inline-block;
+            background: var(--gold-light);
+            color: var(--green-deep);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            margin-left: 8px;
+        }
+
+        .skeleton {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+        }
+
+        .skeleton-line {
+            height: 12px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #EFEADA 25%, #F6F2E4 50%, #EFEADA 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.3s infinite;
+        }
+
+        .skeleton-line.title {
+            width: 45%;
+            height: 16px;
+            margin-bottom: 10px;
+        }
+
+        .skeleton-line.meta {
+            width: 80%;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 12px;
+            color: #9A9887;
+        }
+
+        .reset-link {
+            background: none;
+            border: none;
+            color: #9A9887;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Where are we going in December? 🎉</h1>
+            <p>Vote for your top pick from the spots people suggested. Whoever gets the most votes wins — results update
+                live for everyone who opens this.</p>
+            <div class="header-bottom">
+                <span class="total-count" id="totalCount"></span>
+                <span class="live-label"><span class="live-dot"></span>updating live</span>
+            </div>
+            <div class="status" id="status"></div>
+        </header>
+
+        <div id="options"></div>
+
+        <footer>
+            One vote per person, please 🙏 &nbsp;·&nbsp; <button class="reset-link" id="resetBtn">reset my vote</button>
+        </footer>
+    </div>
+
+    <script>
+        const OPTIONS = [
+            {
+                id: "omu_resort",
+                name: "Omu Resort",
+                meta: "Bogije, Ibeju-Lekki · ~₦33K/head (gate + Uber from Oshodi) · Big fun park, farthest option"
+            },
+            {
+                id: "takwa_bay",
+                name: "Takwa Bay Beach",
+                meta: "Lekki · ₦5K entry, +₦5K boat / +₦20K tent · Beach + boat cruise"
+            },
+            {
+                id: "lufasi_park",
+                name: "Lufasi Park",
+                meta: "Majek, 1st Gate, Lekki-Epe Expy · ₦3,500/head · Nature & adventure, easy drive"
+            },
+            {
+                id: "jhalobia_park",
+                name: "Jhalobia Recreation Park",
+                meta: "Airport Road, Ikeja · ~₦5,000/head · Outdoorsy, swings, easy drive"
+            },
+            {
+                id: "hakuna_matata",
+                name: "Hakuna Matata Theme Park",
+                meta: "Eko Atlantic, VI · ~₦18K–20K/head · Biggest inflatable park, wet & dry zones (Wed–Sun)"
+            },
+            {
+                id: "rosellas_park",
+                name: "Rosellas Park",
+                meta: "Lagos · Fee not confirmed yet · Rides & games"
+            }
+        ];
+
+        const POLL_INTERVAL_MS = 6000;
+
+        let votes = {};
+        let myVote = null;
+        let firstLoad = true;
+        let pollTimer = null;
+
+        const statusEl = document.getElementById('status');
+        const totalEl = document.getElementById('totalCount');
+        const container = document.getElementById('options');
+
+        function setStatus(msg, isError) {
+            statusEl.textContent = msg;
+            statusEl.style.color = isError ? '#B23A3A' : '#C9982F';
+        }
+
+        function renderSkeleton() {
+            container.innerHTML = OPTIONS.map(() => `
+    <div class="skeleton">
+      <div class="skeleton-line title"></div>
+      <div class="skeleton-line meta"></div>
+    </div>
+  `).join('');
+        }
+
+        async function loadVotes() {
+            const loaded = {};
+            for (const opt of OPTIONS) {
+                try {
+                    const res = await window.storage.get('votes:' + opt.id, true);
+                    loaded[opt.id] = res ? parseInt(res.value, 10) || 0 : 0;
+                } catch (e) {
+                    loaded[opt.id] = 0;
+                }
+            }
+            return loaded;
+        }
+
+        async function loadMyVote() {
+            try {
+                const res = await window.storage.get('my_vote', false);
+                return res ? res.value : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function render() {
+            const total = Object.values(votes).reduce((a, b) => a + b, 0);
+            const maxCount = Math.max(0, ...Object.values(votes));
+
+            totalEl.textContent = total > 0
+                ? `${total} vote${total === 1 ? '' : 's'} cast`
+                : 'No votes yet';
+
+            container.innerHTML = '';
+            OPTIONS.forEach(opt => {
+                const count = votes[opt.id] || 0;
+                const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                const isLeading = total > 0 && count === maxCount && maxCount > 0;
+
+                const div = document.createElement('div');
+                div.className = 'option' + (isLeading ? ' leading' : '');
+                div.innerHTML = `
+      <div class="fill-bar" style="width:${pct}%"></div>
+      <div class="option-top">
+        <span class="option-name">${opt.name}${isLeading ? '<span class="crown">👑</span>' : ''}${myVote === opt.id ? '<span class="voted-tag">your vote</span>' : ''}</span>
+      </div>
+      <div class="option-meta">${opt.meta}</div>
+      <div class="option-bottom">
+        <span class="vote-count">${count} vote${count === 1 ? '' : 's'}${total > 0 ? ' · ' + pct + '%' : ''}</span>
+        <button class="vote-btn" data-id="${opt.id}" ${myVote ? 'disabled' : ''}>
+          ${myVote === opt.id ? 'Voted ✓' : 'Vote'}
+        </button>
+      </div>
+    `;
+                container.appendChild(div);
+            });
+
+            container.querySelectorAll('.vote-btn').forEach(btn => {
+                btn.addEventListener('click', () => castVote(btn.getAttribute('data-id')));
+            });
+        }
+
+        async function withRetry(fn, attempts) {
+            let lastErr = null;
+            for (let i = 0; i < attempts; i++) {
+                try {
+                    return await fn();
+                } catch (e) {
+                    lastErr = e;
+                    if (i < attempts - 1) await new Promise(r => setTimeout(r, 400 * (i + 1)));
+                }
+            }
+            throw lastErr;
+        }
+
+        async function castVote(id) {
+            if (myVote) return;
+            setStatus('Saving your vote...');
+            try {
+                let current = null;
+                try {
+                    current = await window.storage.get('votes:' + id, true);
+                } catch (e) {
+                    current = null; // key just doesn't exist yet — that's expected, not an error
+                }
+                const newCount = (current ? parseInt(current.value, 10) || 0 : 0) + 1;
+
+                const setResult = await withRetry(
+                    () => window.storage.set('votes:' + id, String(newCount), true),
+                    3
+                );
+                if (!setResult) throw new Error('storage.set returned no result');
+
+                await withRetry(() => window.storage.set('my_vote', id, false), 3);
+
+                votes[id] = newCount;
+                myVote = id;
+                render();
+                setStatus('Vote saved 🎉');
+            } catch (e) {
+                console.error('Vote save error:', e);
+                const detail = e && e.message ? e.message : String(e);
+                setStatus('Could not save your vote (' + detail + ') — try again.', true);
+            }
+        }
+
+        document.getElementById('resetBtn').addEventListener('click', async () => {
+            if (!myVote) { setStatus('You have not voted yet.'); return; }
+            const votedName = OPTIONS.find(o => o.id === myVote)?.name || 'your pick';
+            if (!confirm(`Remove your vote for ${votedName}?`)) return;
+
+            setStatus('Resetting your vote...');
+            try {
+                const current = await window.storage.get('votes:' + myVote, true).catch(() => null);
+                const newCount = Math.max(0, (current ? parseInt(current.value, 10) || 0 : 0) - 1);
+                await window.storage.set('votes:' + myVote, String(newCount), true);
+                await window.storage.delete('my_vote', false).catch(() => { });
+                votes[myVote] = newCount;
+                myVote = null;
+                render();
+                setStatus('Vote reset — pick again anytime.');
+            } catch (e) {
+                setStatus('Could not reset — try again.', true);
+            }
+        });
+
+        async function pollForUpdates() {
+            try {
+                const fresh = await loadVotes();
+                // Only re-render if something actually changed, to avoid disrupting the user mid-interaction.
+                const changed = OPTIONS.some(opt => (fresh[opt.id] || 0) !== (votes[opt.id] || 0));
+                if (changed) {
+                    votes = fresh;
+                    render();
+                }
+            } catch (e) {
+                // Silent fail on background polls — don't interrupt the user with transient errors.
+            }
+        }
+
+        (async function init() {
+            renderSkeleton();
+            setStatus('Loading votes...');
+            votes = await loadVotes();
+            myVote = await loadMyVote();
+            render();
+            setStatus('');
+            firstLoad = false;
+            pollTimer = setInterval(pollForUpdates, POLL_INTERVAL_MS);
+        })();
+
+        window.addEventListener('beforeunload', () => {
+            if (pollTimer) clearInterval(pollTimer);
+        });
+    </script>
+</body>
+
+</html>
