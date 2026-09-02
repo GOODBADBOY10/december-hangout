@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>December Meetup — Admin</title>
+    <style>
+        :root {
+            --bg: #FAF6EC;
+            --green-deep: #163A2E;
+            --green-mid: #2C5F4A;
+            --gold: #C9982F;
+            --red: #B23A3A;
+            --ink: #1F2A24;
+            --card-bg: #FFFFFF;
+            --card-border: #E4DCC6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'Georgia', 'Iowan Old Style', serif;
+            padding: 28px 18px 60px;
+        }
+
+        .wrap {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* Gate screen */
+        #gate {
+            max-width: 360px;
+            margin: 80px auto;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 28px 24px;
+            text-align: center;
+        }
+
+        #gate h2 {
+            color: var(--green-deep);
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        #gate input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            margin: 14px 0 10px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        #gate button {
+            width: 100%;
+            padding: 10px;
+            background: var(--green-deep);
+            color: #FCF8EE;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        #gate .gate-error {
+            color: var(--red);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            min-height: 16px;
+            margin-top: 6px;
+        }
+
+        /* Admin panel */
+        #panel {
+            display: none;
+        }
+
+        header {
+            border-bottom: 3px solid var(--green-deep);
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 26px;
+            color: var(--green-deep);
+            margin: 0 0 6px;
+        }
+
+        header p {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13.5px;
+            color: #55594F;
+            margin: 0;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .total-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--green-deep);
+        }
+
+        .reset-all-btn {
+            background: var(--red);
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .row {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .row .name {
+            font-weight: 700;
+            color: var(--green-deep);
+            font-size: 15px;
+        }
+
+        .row .count {
+            font-size: 13px;
+            color: var(--green-mid);
+            margin-top: 2px;
+        }
+
+        .row-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bar-bg {
+            width: 100%;
+            height: 6px;
+            background: #EFEADA;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+
+        .row-left {
+            flex: 1;
+        }
+
+        .reset-btn {
+            background: none;
+            border: 1px solid var(--card-border);
+            color: #7A7D6F;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .reset-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .status {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            color: var(--gold);
+            margin-bottom: 14px;
+            min-height: 16px;
+        }
+
+        .live-label {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 12px;
+            color: #7A7D6F;
+        }
+
+        .live-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #4C9A6A;
+            margin-right: 6px;
+            animation: pulse 1.6s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.35;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="gate">
+        <h2>🔒 Admin Access</h2>
+        <input type="password" id="passInput" placeholder="Enter passcode" />
+        <button id="unlockBtn">Unlock</button>
+        <div class="gate-error" id="gateError"></div>
+    </div>
+
+    <div class="wrap" id="panel">
+        <header>
+            <h1>December Meetup — Admin</h1>
+            <p>Live vote counts for every option. Reset one option or everything below.</p>
+        </header>
+
+        <div class="toolbar">
+            <span class="total-label" id="totalLabel">Loading…</span>
+            <span class="live-label"><span class="live-dot"></span>live</span>
+        </div>
+
+        <div class="status" id="status"></div>
+
+        <div id="rows"></div>
+
+        <button class="reset-all-btn" id="resetAllBtn" style="margin-top: 10px;">Reset ALL votes</button>
+    </div>
+
+    <script>
+        const PASSCODE = "selfmanademola@gmail.com";
+        const DB_URL = "https://december-hangout-default-rtdb.firebaseio.com";
+
+        const OPTIONS = [
+            { id: "omu-resort", name: "Omu Resort" },
+            { id: "takwa-bay", name: "Takwa Bay Beach" },
+            { id: "lufasi-park", name: "Lufasi Park" },
+            { id: "jhalobia-park", name: "Jhalobia Recreation Park" },
+            { id: "hakuna-matata", name: "Hakuna Matata Theme Park" },
+            { id: "rosellas-park", name: "Rosellas Park" }
+        ];
+
+        let votes = {};
+        const rowsEl = document.getElementById('rows');
+        const statusEl = document.getElementById('status');
+        const totalLabelEl = document.getElementById('totalLabel');
+
+        function setStatus(msg, isError) {
+            statusEl.textContent = msg;
+            statusEl.style.color = isError ? '#B23A3A' : '#C9982F';
+        }
+
+        async function dbGet(path) {
+            const res = await fetch(DB_URL + "/" + path + ".json");
+            if (!res.ok) throw new Error("get failed " + res.status);
+            const val = await res.json();
+            return typeof val === 'number' ? val : 0;
+        }
+
+        async function dbSet(path, value) {
+            const res = await fetch(DB_URL + "/" + path + ".json", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(value)
+            });
+            if (!res.ok) throw new Error("set failed " + res.status);
+            return value;
+        }
+
+        async function loadVotes() {
+            const loaded = {};
+            await Promise.all(OPTIONS.map(async opt => {
+                try {
+                    loaded[opt.id] = await dbGet("votes/" + opt.id);
+                } catch (e) {
+                    loaded[opt.id] = votes[opt.id] || 0;
+                }
+            }));
+            return loaded;
+        }
+
+        function render() {
+            const total = Object.values(votes).reduce((a, b) => a + b, 0);
+            totalLabelEl.textContent = total === 0 ? 'No votes yet' : (total + ' vote' + (total === 1 ? '' : 's') + ' total');
+
+            const maxVotes = Math.max(0, ...OPTIONS.map(o => votes[o.id] || 0));
+            const sorted = [...OPTIONS].sort((a, b) => (votes[b.id] || 0) - (votes[a.id] || 0));
+
+            rowsEl.innerHTML = '';
+            sorted.forEach(opt => {
+                const count = votes[opt.id] || 0;
+                const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                const isLeading = maxVotes > 0 && count === maxVotes;
+                const row = document.createElement('div');
+                row.className = 'row';
+                row.innerHTML = `
+      <div class="row-left">
+        <div class="name">${opt.name}${isLeading ? ' 👑' : ''}</div>
+        <div class="count">${count} vote${count === 1 ? '' : 's'} · ${pct}%</div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="row-right">
+        <button class="reset-btn" data-id="${opt.id}">Reset</button>
+      </div>
+    `;
+                rowsEl.appendChild(row);
+            });
+
+            rowsEl.querySelectorAll('.reset-btn').forEach(btn => {
+                btn.addEventListener('click', () => resetOne(btn.getAttribute('data-id')));
+            });
+        }
+
+        async function resetOne(id) {
+            const opt = OPTIONS.find(o => o.id === id);
+            if (!confirm(`Reset votes for "${opt.name}" back to 0?`)) return;
+            setStatus('Resetting...');
+            try {
+                await dbSet("votes/" + id, 0);
+                votes[id] = 0;
+                render();
+                setStatus('Reset ✅');
+            } catch (e) {
+                setStatus('Could not reset — try again.', true);
+            }
+        }
+
+        async function resetAll() {
+            if (!confirm('Reset ALL votes for every option back to 0? This cannot be undone.')) return;
+            setStatus('Resetting everything...');
+            try {
+                await Promise.all(OPTIONS.map(opt => dbSet("votes/" + opt.id, 0)));
+                OPTIONS.forEach(opt => votes[opt.id] = 0);
+                render();
+                setStatus('All votes reset ✅');
+            } catch (e) {
+                setStatus('Could not reset everything — try again.', true);
+            }
+        }
+
+        document.getElementById('resetAllBtn').addEventListener('click', resetAll);
+
+        async function refresh() {
+            try {
+                const latest = await loadVotes();
+                votes = latest;
+                render();
+            } catch (e) { }
+        }
+
+        document.getElementById('unlockBtn').addEventListener('click', async () => {
+            const input = document.getElementById('passInput').value;
+            if (input === PASSCODE) {
+                document.getElementById('gate').style.display = 'none';
+                document.getElementById('panel').style.display = 'block';
+                setStatus('Loading votes...');
+                votes = await loadVotes();
+                render();
+                setStatus('');
+                setInterval(refresh, 4000);
+            } else {
+                document.getElementById('gateError').textContent = 'Incorrect passcode.';
+            }
+        });
+
+        document.getElementById('passInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('unlockBtn').click();
+        });
+    </script>
+</body>
+
+</html>
