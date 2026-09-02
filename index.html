@@ -4,8 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>December Meetup — Pick the Spot</title>
-    <script src="https://cdn.jsdelivr.net/npm/counterapi/dist/counter.browser.min.js"></script>
-
     <style>
         :root {
             --bg: #FAF6EC;
@@ -251,7 +249,6 @@
             font-family: inherit;
         }
     </style>
-
 </head>
 
 <body>
@@ -275,10 +272,8 @@
     </div>
 
     <script>
-        // ---- CounterAPI config ----
-        const CA_WORKSPACE = "december-hangout";
-        const CA_TOKEN = "ut_ydqqEYkmfEvOBCiPCjrMKfxkmpPbNXeXZcW6DNJU";
-        const caClient = new Counter({ workspace: CA_WORKSPACE, accessToken: CA_TOKEN });
+        // ---- Firebase Realtime Database config ----
+        const DB_URL = "https://december-hangout-default-rtdb.firebaseio.com";
 
         const OPTIONS = [
             { id: "omu-resort", name: "Omu Resort", meta: "Bogije, Ibeju-Lekki · ~₦33K/head (gate + Uber from Oshodi) · Big fun park, farthest option" },
@@ -300,36 +295,28 @@
             statusEl.style.color = isError ? '#B23A3A' : '#C9982F';
         }
 
-        function extractCount(result) {
-            try {
-                const d = result.data || result;
-                if (typeof d.up_count === 'number') return d.up_count;
-                if (typeof d.value === 'number') return d.value;
-                if (typeof d.count === 'number') return d.count;
-            } catch (e) { }
-            return 0;
+        async function dbGet(path) {
+            const res = await fetch(DB_URL + "/" + path + ".json");
+            if (!res.ok) throw new Error("get failed " + res.status);
+            const val = await res.json();
+            return typeof val === 'number' ? val : 0;
         }
 
-        async function caGet(name) {
-            const result = await caClient.get(name);
-            return extractCount(result);
-        }
-
-        async function caUp(name) {
-            const result = await caClient.up(name);
-            return extractCount(result);
-        }
-
-        async function caDown(name) {
-            const result = await caClient.down(name);
-            return extractCount(result);
+        async function dbSet(path, value) {
+            const res = await fetch(DB_URL + "/" + path + ".json", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(value)
+            });
+            if (!res.ok) throw new Error("set failed " + res.status);
+            return value;
         }
 
         async function loadVotes() {
             const loaded = {};
             await Promise.all(OPTIONS.map(async opt => {
                 try {
-                    loaded[opt.id] = await caGet(opt.id);
+                    loaded[opt.id] = await dbGet("votes/" + opt.id);
                 } catch (e) {
                     loaded[opt.id] = votes[opt.id] || 0;
                 }
@@ -392,7 +379,9 @@
             if (myVote) return;
             setStatus('Saving your vote...');
             try {
-                const newCount = await caUp(id);
+                const current = await dbGet("votes/" + id);
+                const newCount = current + 1;
+                await dbSet("votes/" + id, newCount);
                 votes[id] = newCount;
                 myVote = id;
                 saveMyVote(id);
@@ -406,7 +395,9 @@
         document.getElementById('resetBtn').addEventListener('click', async () => {
             if (!myVote) { setStatus('You have not voted yet.'); return; }
             try {
-                const newCount = await caDown(myVote);
+                const current = await dbGet("votes/" + myVote);
+                const newCount = Math.max(0, current - 1);
+                await dbSet("votes/" + myVote, newCount);
                 votes[myVote] = newCount;
                 myVote = null;
                 saveMyVote(null);
@@ -439,7 +430,6 @@
             setInterval(refreshVotes, 4000);
         })();
     </script>
-
 </body>
 
 </html>
