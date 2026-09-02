@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>December Meetup — Pick the Spot</title>
+    <script src="https://cdn.jsdelivr.net/npm/counterapi/dist/counter.browser.min.js"></script>
 
     <style>
         :root {
@@ -277,7 +278,7 @@
         // ---- CounterAPI config ----
         const CA_WORKSPACE = "december-hangout";
         const CA_TOKEN = "ut_ydqqEYkmfEvOBCiPCjrMKfxkmpPbNXeXZcW6DNJU";
-        const CA_BASE = "https://api.counterapi.dev/v2/" + CA_WORKSPACE + "/";
+        const caClient = new Counter({ workspace: CA_WORKSPACE, accessToken: CA_TOKEN });
 
         const OPTIONS = [
             { id: "omu-resort", name: "Omu Resort", meta: "Bogije, Ibeju-Lekki · ~₦33K/head (gate + Uber from Oshodi) · Big fun park, farthest option" },
@@ -299,9 +300,9 @@
             statusEl.style.color = isError ? '#B23A3A' : '#C9982F';
         }
 
-        function extractCount(json) {
+        function extractCount(result) {
             try {
-                const d = json.data || json;
+                const d = result.data || result;
                 if (typeof d.up_count === 'number') return d.up_count;
                 if (typeof d.value === 'number') return d.value;
                 if (typeof d.count === 'number') return d.count;
@@ -310,30 +311,18 @@
         }
 
         async function caGet(name) {
-            const res = await fetch(CA_BASE + name, {
-                headers: { "Authorization": "Bearer " + CA_TOKEN }
-            });
-            if (!res.ok) throw new Error("get failed " + res.status);
-            const json = await res.json();
-            return extractCount(json);
+            const result = await caClient.get(name);
+            return extractCount(result);
         }
 
         async function caUp(name) {
-            const res = await fetch(CA_BASE + name + "/up", {
-                headers: { "Authorization": "Bearer " + CA_TOKEN }
-            });
-            if (!res.ok) throw new Error("up failed " + res.status);
-            const json = await res.json();
-            return extractCount(json);
+            const result = await caClient.up(name);
+            return extractCount(result);
         }
 
         async function caDown(name) {
-            const res = await fetch(CA_BASE + name + "/down", {
-                headers: { "Authorization": "Bearer " + CA_TOKEN }
-            });
-            if (!res.ok) throw new Error("down failed " + res.status);
-            const json = await res.json();
-            return extractCount(json);
+            const result = await caClient.down(name);
+            return extractCount(result);
         }
 
         async function loadVotes() {
@@ -450,6 +439,7 @@
             setInterval(refreshVotes, 4000);
         })();
     </script>
+
 </body>
 
 </html>
