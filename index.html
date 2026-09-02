@@ -231,6 +231,103 @@
             }
         }
 
+        .details-toggle {
+            background: none;
+            border: none;
+            color: var(--green-mid);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 12.5px;
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .details-panel {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--card-border);
+            position: relative;
+            z-index: 2;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            color: #4A4E42;
+            line-height: 1.6;
+        }
+
+        .details-panel.open {
+            display: block;
+        }
+
+        .details-panel h4 {
+            margin: 10px 0 4px;
+            font-size: 12.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--green-mid);
+            font-weight: 700;
+        }
+
+        .details-panel h4:first-child {
+            margin-top: 0;
+        }
+
+        .details-panel ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .details-panel li {
+            margin-bottom: 3px;
+        }
+
+        .img-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .img-item {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #EFEADA;
+        }
+
+        .img-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .img-placeholder {
+            display: none;
+            position: absolute;
+            inset: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            background: repeating-linear-gradient(45deg, #EFEADA, #EFEADA 8px, #E6DFC9 8px, #E6DFC9 16px);
+            color: #8B8878;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 9.5px;
+            text-align: center;
+            padding: 4px;
+            word-break: break-all;
+        }
+
+        .img-placeholder .icon {
+            font-size: 16px;
+        }
+
         footer {
             margin-top: 20px;
             text-align: center;
@@ -276,12 +373,103 @@
         const DB_URL = "https://december-hangout-default-rtdb.firebaseio.com";
 
         const OPTIONS = [
-            { id: "omu-resort", name: "Omu Resort", meta: "Bogije, Ibeju-Lekki · ~₦33K/head (gate + Uber from Oshodi) · Big fun park, farthest option" },
-            { id: "takwa-bay", name: "Takwa Bay Beach", meta: "Lekki · ₦5K entry, +₦5K boat / +₦20K tent · Beach + boat cruise" },
-            { id: "lufasi-park", name: "Lufasi Park", meta: "Majek, 1st Gate, Lekki-Epe Expy · ₦3,500/head · Nature & adventure, easy drive" },
-            { id: "jhalobia-park", name: "Jhalobia Recreation Park", meta: "Airport Road, Ikeja · ~₦5,000/head · Outdoorsy, swings, easy drive" },
-            { id: "hakuna-matata", name: "Hakuna Matata Theme Park", meta: "Eko Atlantic, VI · ~₦18K–20K/head · Biggest inflatable park, wet & dry zones (Wed–Sun)" },
-            { id: "rosellas-park", name: "Rosellas Park", meta: "Lagos · Fee not confirmed yet · Rides & games" }
+            {
+                id: "omu-resort",
+                name: "Omu Resort",
+                meta: "Bogije, Ibeju-Lekki · ~₦33K/head (gate + Uber from Oshodi) · Big fun park, farthest option",
+                images: ["images/omu-resort-1.jpg", "images/omu-resort-2.jpg", "images/omu-resort-3.jpg", "images/omu-resort-4.jpg", "images/omu-resort-5.jpg"],
+                details: {
+                    description: "A 22-hectare nature-meets-amusement resort in Ibeju-Lekki, bordered by Omu Creek. Has a mini zoo (monkeys, lions, hyenas, zebra), Wax Museum, water park, SeaWorld, and rides.",
+                    cost: [
+                        "Gold — access to Zoo, Mini Golf, Horse Riding, Water Slide/Park, Kiddies Area, Seaworld, Archery, Amusement Park, Pool (₦15K quoted by group)",
+                        "Platinum — everything in Gold + Kayaking, Roller Skating, Hoverboard",
+                        "Prime — everything in Platinum + Go-Kart",
+                        "Super Prime — everything + Waterfront Sitting, Boat Cruise, Welcome Drinks (priciest tier)",
+                        "Standalone add-ons: Kayaking ~₦4,000, Skating ~₦3,000, Individual Go-Kart ~₦9,000"
+                    ],
+                    activities: ["Mini zoo & wildlife (lions, monkeys, zebra)", "Water park & slides", "Go-karting & paintball (add-on)", "Boat cruise (Super Prime only)", "Amusement rides & mini golf"],
+                    getting_there: "Address: Bogije Town, almost opposite Lakowe Lakes Golf Course, Ibeju-Lekki. Heading from Ajah, pass Lagos Business School, Corona School, Greenspring School, Mayfair Garden, Lakowe Town; after Elemoro Police Station look left for Elemoro Shopping Complex, U-turn onto Bola Tinubu Road and follow signs. Plan for Uber (~4/car) from Oshodi as discussed."
+                }
+            },
+            {
+                id: "takwa-bay",
+                name: "Takwa Bay Beach",
+                meta: "Lekki · ₦5K entry, +₦5K boat / +₦20K tent · Beach + boat cruise",
+                images: ["images/takwa-bay-1.jpg", "images/takwa-bay-2.jpg", "images/takwa-bay-3.jpg", "images/takwa-bay-4.jpg", "images/takwa-bay-5.jpg"],
+                details: {
+                    description: "A quiet, artificial sheltered beach island near Lagos harbour, only reachable by boat. Known for calm water, surfing, and a laid-back vibe away from the mainland noise.",
+                    cost: [
+                        "Boat ride: ~₦1,000–₦5,000 per person round trip depending on jetty & boat type (banana boat cheapest, speedboat pricier)",
+                        "Beach entry: ~₦500–₦2,000 (group discount possible, festive rate quoted at ₦5,000 max)",
+                        "Chairs/tables rental: ₦500–₦2,000",
+                        "Overnight tent: ~₦10,000–₦25,000 depending on size"
+                    ],
+                    activities: ["Boat cruise / banana boat ride", "Swimming & sunbathing", "Horse riding on the beach", "Volleyball (bring your own ball)", "Sunset walk to nearby West Mole breakwater"],
+                    getting_there: "Only accessible by boat. Popular boarding points: Marina/CMS, Mekwe Jetty (near Bonny Camp), or Tarzan Marine Services (VI, beside Lagos Oriental Hotel). Boat rides run roughly 10–25 mins depending on jetty."
+                }
+            },
+            {
+                id: "lufasi-park",
+                name: "Lufasi Park",
+                meta: "Majek, 1st Gate, Lekki-Epe Expy · ₦3,500/head · Nature & adventure, easy drive",
+                images: ["images/lufasi-park-1.jpg", "images/lufasi-park-2.jpg", "images/lufasi-park-3.jpg", "images/lufasi-park-4.jpg", "images/lufasi-park-5.jpg"],
+                details: {
+                    description: "A 20-hectare urban forest & animal sanctuary (LUFASI = Lekki Urban Forest Animal Sanctuary Initiative). Known for nature trails, a small lake (Lake Nora), rescued animals, and a calm, green picnic atmosphere.",
+                    cost: [
+                        "Gate fee: ₦3,500/head as quoted by the group (older listings show ₦1,000–₦1,500, prices may have risen)",
+                        "No corkage fee — you can bring your own food and drinks",
+                        "Free tour guides available on request"
+                    ],
+                    activities: ["Nature trails & hiking", "Birdwatching (hooded vulture, hornbill, owls)", "Picnicking on open lawns near the lake", "Animal sightings (monkeys, tortoises, horses, donkeys)", "Football & table tennis courts"],
+                    getting_there: "Located at Majek 1st Gate, KM 41 Lekki-Epe Expressway, after Lagos Business School and a few blocks from Novare Mall (Shoprite), shares a fence with Farapark Estate. Easily reached by car/Uber along the expressway; danfo + short okada/bike also works."
+                }
+            },
+            {
+                id: "jhalobia-park",
+                name: "Jhalobia Recreation Park",
+                meta: "Airport Road, Ikeja · ~₦5,000/head · Outdoorsy, swings, easy drive",
+                images: ["images/jhalobia-park-1.jpg", "images/jhalobia-park-2.jpg", "images/jhalobia-park-3.jpg", "images/jhalobia-park-4.jpg", "images/jhalobia-park-5.jpg"],
+                details: {
+                    description: "A carefully landscaped 2-acre botanical garden & private park on the mainland, built in 1998. Known for manicured lawns, fountains, topiaries, and a peaceful, well-kept atmosphere — more serene garden than thrill park.",
+                    cost: [
+                        "Entrance fee: reports range ₦2,000–₦5,000/head (group quoted ~₦5,000 max)",
+                        "Private park — pre-booking is typically required/recommended before visiting"
+                    ],
+                    activities: ["Family picnic on manicured lawns", "Children's play area with swings", "Walking among fountains, topiaries & rock gardens", "Photography — very photogenic, well-manicured grounds"],
+                    getting_there: "Located along Murtala Muhammed International Airport Road, Ikeja, between Hajj Camp and Ajao Estate. Easily accessible by car on the mainland; call ahead to confirm booking."
+                }
+            },
+            {
+                id: "hakuna-matata",
+                name: "Hakuna Matata Theme Park",
+                meta: "Eko Atlantic, VI · ~₦18K–20K/head · Biggest inflatable park, wet & dry zones (Wed–Sun)",
+                images: ["images/hakuna-matata-1.jpg", "images/hakuna-matata-2.jpg", "images/hakuna-matata-3.jpg", "images/hakuna-matata-4.jpg", "images/hakuna-matata-5.jpg"],
+                details: {
+                    description: "West Africa's biggest inflatable theme park, run by Eko Hotels inside Eko Atlantic City. Split into a Wet Zone (slides, pools) and Dry Zone (bouncy castles, carousel, games) with an African-Saharan wildlife theme.",
+                    cost: [
+                        "Weekday gate fee: ~₦18,000/head",
+                        "Weekend gate fee: ~₦20,000/head",
+                        "Fee covers unlimited access to all activities (except food & drinks, which are extra)",
+                        "Free for babies who can't walk yet"
+                    ],
+                    activities: ["Water slides & double-lane snow slide", "Swimming pools", "Bouncy castles & obstacle courses", "Carousel (40-seater) & train ride", "Snooker, table tennis & board games"],
+                    getting_there: "Location: Eko Atlantic City, Ahmadu Bello Way, Victoria Island. Open Wednesday–Sunday (closed Mon & Tue); hours roughly 2pm–9pm weekdays, from 11am on weekends. No reservation needed, walk-in payment. Bring socks for the bouncy castles and a swimsuit for wet zones."
+                }
+            },
+            {
+                id: "rosellas-park",
+                name: "Rosellas Park",
+                meta: "Lagos · Fee not confirmed yet · Rides & games",
+                images: ["images/rosellas-park-1.jpg", "images/rosellas-park-2.jpg", "images/rosellas-park-3.jpg", "images/rosellas-park-4.jpg", "images/rosellas-park-5.jpg"],
+                details: {
+                    description: "One of Lagos's oldest amusement parks (opened 2001), nicknamed 'Kid's Heaven' by many Nigerians. A classic funfair-style park with a big mix of rides, sports facilities, and games, popular for both kids and adults.",
+                    cost: [
+                        "Exact current gate fee not confirmed — older listings suggest it's on the more affordable end (often quoted well under ₦5,000, but needs re-checking before the day)"
+                    ],
+                    activities: ["Roller coaster & Ferris wheel-style rides", "Swimming pools & boat rides", "Bouncy castle & merry-go-round", "Trampolines & various slides/swings", "Football field, volleyball, badminton, snooker, table tennis"],
+                    getting_there: "Address: Km 3, LASU-Isheri Road, Rosellas Bus-stop, Igando, Lagos Mainland. Best reached by car/Uber; ask locally for the Rosellas Bus-stop landmark on LASU-Isheri Road."
+                }
+            }
         ];
 
         let votes = {};
@@ -339,6 +527,31 @@
             } catch (e) { }
         }
 
+        function buildGalleryHtml(images, placeName) {
+            return `<div class="img-gallery">` + images.map((src, i) => `
+    <div class="img-item">
+      <img src="${src}" alt="${placeName} photo ${i + 1}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="img-placeholder"><span class="icon">📷</span><span>${src}</span></div>
+    </div>
+  `).join('') + `</div>`;
+        }
+
+        function buildDetailsHtml(opt) {
+            const d = opt.details;
+            const costItems = d.cost.map(c => `<li>${c}</li>`).join('');
+            const activityItems = d.activities.map(a => `<li>${a}</li>`).join('');
+            return `
+    ${buildGalleryHtml(opt.images, opt.name)}
+    <p>${d.description}</p>
+    <h4>Cost breakdown</h4>
+    <ul>${costItems}</ul>
+    <h4>Activities</h4>
+    <ul>${activityItems}</ul>
+    <h4>Getting there</h4>
+    <p>${d.getting_there}</p>
+  `;
+        }
+
         function render(justVotedId) {
             const total = Object.values(votes).reduce((a, b) => a + b, 0);
             const totalEl = document.getElementById('totalCount');
@@ -366,12 +579,23 @@
           ${myVote === opt.id ? 'Voted ✓' : 'Vote'}
         </button>
       </div>
+      <button class="details-toggle" data-toggle="${opt.id}">See full details ▾</button>
+      <div class="details-panel" id="details-${opt.id}">${buildDetailsHtml(opt)}</div>
     `;
                 container.appendChild(div);
             });
 
             container.querySelectorAll('.vote-btn').forEach(btn => {
                 btn.addEventListener('click', () => castVote(btn.getAttribute('data-id')));
+            });
+
+            container.querySelectorAll('.details-toggle').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-toggle');
+                    const panel = document.getElementById('details-' + id);
+                    const isOpen = panel.classList.toggle('open');
+                    btn.textContent = isOpen ? 'Hide full details ▴' : 'See full details ▾';
+                });
             });
         }
 
